@@ -16,11 +16,14 @@ import 'package:mdns_plugin_example/src/bloc/app.dart';
 /////////////////////////////////////////////////////////////////////
 
 void main() {
-  runApp(BlocProvider<AppBloc>(
-      builder: (context) {
-        return AppBloc()..dispatch(AppEventStart());
+  runApp(
+    BlocProvider<AppBloc>(
+      create: (context) {
+        return AppBloc()..add(AppEventStart());
       },
-      child: MyApp()));
+      child: MyApp(),
+    ),
+  );
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -43,16 +46,20 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-            appBar: AppBar(
-              title: const Text('Chromecast Browser'),
-            ),
-            body: BlocBuilder<AppBloc, AppState>(builder: (context, state) {
-              if (state is AppStateUninitialized) {
-                return Placeholder();
-              } else {
-                return ServiceList();
-              }
-            })));
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Chromecast Browser'),
+        ),
+        body: BlocBuilder<AppBloc, AppState>(
+          builder: (context, state) {
+            if (state is AppStateUninitialized) {
+              return Placeholder();
+            } else {
+              return ServiceList();
+            }
+          },
+        ),
+      ),
+    );
   }
 }

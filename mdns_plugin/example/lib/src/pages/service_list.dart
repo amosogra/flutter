@@ -19,16 +19,20 @@ class ServiceList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: BlocListener<AppBloc, AppState>(
-            listener: (context, state) {
-              if (state is AppUpdated &&
-                  state.action == AppStateAction.ShowToast) {
-                Scaffold.of(context)
-                    .showSnackBar(snackBarWithText("Rescanning"));
-              }
-            },
-            child: Column(
-                children: <Widget>[infoWidget(context), listWidget(context)])));
+      body: BlocListener<AppBloc, AppState>(
+        listener: (context, state) {
+          if (state is AppUpdated && state.action == AppStateAction.ShowToast) {
+            ScaffoldMessenger.of(context).showSnackBar(snackBarWithText("Rescanning"));
+          }
+        },
+        child: Column(
+          children: <Widget>[
+            infoWidget(context),
+            listWidget(context),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget snackBarWithText(String text) {
@@ -41,9 +45,7 @@ class ServiceList extends StatelessWidget {
         if (state is AppUpdated && state.services.count > 0) {
           return Expanded(
               child: ListView.builder(
-                  itemCount: state.services.count,
-                  itemBuilder: (BuildContext context, int index) =>
-                      ServiceTile(state.services.itemAtIndex(index))));
+                  itemCount: state.services.count, itemBuilder: (BuildContext context, int index) => ServiceTile(state.services.itemAtIndex(index))));
         } else {
           return Expanded(child: Center(child: Text("No Chromecasts Found")));
         }
@@ -54,18 +56,24 @@ class ServiceList extends StatelessWidget {
       builder: (BuildContext context, AppState state) {
         final AppBloc appBloc = BlocProvider.of<AppBloc>(context);
         return Card(
-            child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          ListTile(
-              title: Text('FOUND CHROMECASTS'),
-              subtitle: Text(
-                  "The following devices were found on your local network")),
-          ButtonTheme.bar(
-              child: ButtonBar(children: <Widget>[
-            FlatButton(
-                child: const Text('RESCAN'),
-                onPressed: () => appBloc.dispatch(
-                    AppEventDiscovery(AppEventDiscoveryState.Restart)))
-          ]))
-        ]));
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(title: Text('FOUND CHROMECASTS'), subtitle: Text("The following devices were found on your local network")),
+              Container(
+                child: ButtonBar(
+                  children: <Widget>[
+                    TextButton(
+                      child: const Text('RESCAN'),
+                      onPressed: () => appBloc.add(
+                        AppEventDiscovery(AppEventDiscoveryState.Restart),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
       });
 }

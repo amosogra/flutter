@@ -49,7 +49,7 @@ class MDNSPlugin : MethodCallHandler,StreamHandler {
   }
 
   constructor(registrar: Registrar) {
-    nsdManager = registrar.activity().getSystemService(Context.NSD_SERVICE) as NsdManager
+    nsdManager = registrar.activity()?.getSystemService(Context.NSD_SERVICE) as NsdManager
     activity = registrar.activity()
     EventChannel(registrar.messenger(), "mdns_plugin_delegate").setStreamHandler(this)
   }
